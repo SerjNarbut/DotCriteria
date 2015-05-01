@@ -52,6 +52,15 @@ namespace DotCriteriaTests
             //test different params name
             ICriteria<int> criteria2 = new Criteria<int>(i => i > 10).And(j => j % 2 == 0).Or(k => k == 8);
             Assert.IsTrue(criteria2.Compile()(a));
+        }
+
+        [TestMethod]
+        public void CaheCriteriaTest()
+        {
+            int a = 8;
+            ICriteria<int> criteria = new CacheCriteria<int>(i => i > 10).And(i => i % 2 == 0).Or(i => i == 8);
+            Assert.IsTrue(criteria.Compile()(a));
+            Assert.IsTrue((criteria as CacheCriteria<int>).IsCompiled);
 
         }
     }

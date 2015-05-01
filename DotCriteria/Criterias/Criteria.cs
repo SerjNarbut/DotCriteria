@@ -36,7 +36,7 @@ namespace DotCriteria.Criterias
                 Lambda.Body,
                 SwapParams.ReplaceParam(other.Body, paramTwo, paramOne)
                 ), Lambda.Parameters);
-            return new Criteria<T>(newLambda);
+            return Construct(newLambda);
         }
 
         public virtual ICriteria<T> And(Expression<Func<T, bool>> other)
@@ -48,12 +48,17 @@ namespace DotCriteria.Criterias
                 Lambda.Body,
                 SwapParams.ReplaceParam(other.Body, paramTwo, paramOne)
                 ), Lambda.Parameters);
-            return new Criteria<T>(newLambda);
+            return Construct(newLambda);
         }
 
         public virtual Func<T, bool> Compile()
         {
             return Lambda.Compile();
+        }
+
+        protected virtual ICriteria<T> Construct(Expression<Func<T, bool>> lambda)
+        {
+            return new Criteria<T>(lambda);
         }
     }
 }

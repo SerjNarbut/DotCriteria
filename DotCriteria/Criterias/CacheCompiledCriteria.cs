@@ -28,5 +28,10 @@ namespace DotCriteria.Criterias
             }
             return predicate;
         }
+
+        protected override ICriteria<T> Construct(Expression<Func<T, bool>> lambda)
+        {
+            return new CacheCriteria<T>(lambda);
+        }
     }
 }
