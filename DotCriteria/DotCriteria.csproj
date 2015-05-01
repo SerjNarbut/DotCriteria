@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Criterias\CacheCompiledCriteria.cs" />
     <Compile Include="Criterias\Criteria.cs" />
     <Compile Include="Criterias\ICriteria.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
