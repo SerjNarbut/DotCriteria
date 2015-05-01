@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotCriteria.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -11,27 +12,46 @@ namespace DotCriteria.Criterias
     {
         public System.Linq.Expressions.Expression<Func<T, bool>> Lambda { get; private set; }
 
-        public ICriteria<T> Or(ICriteria<T> other)
+        public Criteria(Expression<Func<T, bool>> lambda)
         {
-            throw new NotImplementedException();
+            this.Lambda = lambda;
         }
 
-        public ICriteria<T> And(ICriteria<T> other)
+        public virtual ICriteria<T> Or(ICriteria<T> other)
         {
-            throw new NotImplementedException();
+            return Or(other.Lambda);
         }
 
-        public ICriteria<T> Or(Expression<Func<T, bool>> other)
+        public virtual ICriteria<T> And(ICriteria<T> other)
         {
-            throw new NotImplementedException();
+            return And(other.Lambda);
         }
 
-        public ICriteria<T> And(Expression<Func<T, bool>> other)
+        public virtual ICriteria<T> Or(Expression<Func<T, bool>> other)
         {
-            throw new NotImplementedException();
+            var paramOne = Lambda.Parameters[0];
+            var paramTwo = other.Parameters[0];
+
+            var newLambda = Expression.Lambda<Func<T, bool>>(Expression.OrElse(
+                Lambda.Body,
+                SwapParams.ReplaceParam(other.Body, paramTwo, paramOne)
+                ), Lambda.Parameters);
+            return new Criteria<T>(newLambda);
         }
 
-        public Func<T, bool> Compile()
+        public virtual ICriteria<T> And(Expression<Func<T, bool>> other)
+        {
+            var paramOne = Lambda.Parameters[0];
+            var paramTwo = other.Parameters[0];
+
+            var newLambda = Expression.Lambda<Func<T, bool>>(Expression.AndAlso(
+                Lambda.Body,
+                SwapParams.ReplaceParam(other.Body, paramTwo, paramOne)
+                ), Lambda.Parameters);
+            return new Criteria<T>(newLambda);
+        }
+
+        public virtual Func<T, bool> Compile()
         {
             return Lambda.Compile();
         }
